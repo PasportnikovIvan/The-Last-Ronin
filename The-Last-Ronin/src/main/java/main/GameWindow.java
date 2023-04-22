@@ -17,7 +17,7 @@ public class GameWindow {
 
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //exit on close
         jframe.add(gamePanel);
-        jframe.setLocationRelativeTo(null);
+//        jframe.setLocationRelativeTo(null);
         jframe.setResizable(false); //to not resize window
         jframe.pack(); //to fit the preferred size
         jframe.setVisible(true); //makes the window open
