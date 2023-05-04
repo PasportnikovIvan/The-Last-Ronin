@@ -1,6 +1,9 @@
 package gamestates;
 
 import main.Game;
+import ui.MenuButton;
+
+import java.awt.event.MouseEvent;
 
 //State class will be the super class for all the game states
 public class State {
@@ -9,6 +12,11 @@ public class State {
 
     public State(Game game) {
         this.game = game;
+    }
+
+    //check if pressing inside the button
+    public boolean isIn(MouseEvent e, MenuButton mb) {
+        return mb.getBounds().contains(e.getX(), e.getY());
     }
 
     public Game getGame() {

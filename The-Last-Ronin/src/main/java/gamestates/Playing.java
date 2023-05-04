@@ -3,8 +3,9 @@ package gamestates;
 import entities.Player;
 import levels.LevelManager;
 import main.Game;
+import ui.PauseOverlay;
 
-import java.awt.*;
+import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
@@ -12,6 +13,8 @@ import java.awt.event.MouseEvent;
 public class Playing extends State implements Statemethods{
     private Player player;
     private LevelManager levelManager;
+    private PauseOverlay pauseOverlay;
+    private boolean paused = false; //the important boolean, that is going to decide whether to show the pause screen or not
 
     public Playing(Game game) {
         super(game);
@@ -22,18 +25,28 @@ public class Playing extends State implements Statemethods{
         levelManager = new LevelManager(game);
         player = new Player(200, 200, (int) (64 * Game.SCALE), (int) (40 * Game.SCALE));
         player.loadLvlData(levelManager.getCurrentLevel().getLevelData());
+        pauseOverlay = new PauseOverlay(this);
     }
 
     @Override
     public void update() {
-        levelManager.update();
-        player.update();
+        //game have to stop when it's paused
+        if (!paused) {
+            levelManager.update();
+            player.update();
+        } else {
+            pauseOverlay.update();
+        }
     }
 
     @Override
     public void draw(Graphics g) {
         levelManager.draw(g);
         player.render(g);
+
+        if (paused) {
+            pauseOverlay.draw(g);
+        }
     }
 
     @Override
@@ -44,19 +57,31 @@ public class Playing extends State implements Statemethods{
         }
     }
 
+    public void mouseDragged(MouseEvent e) {
+        if (paused) {
+            pauseOverlay.mouseDragged(e);
+        }
+    }
+
     @Override
     public void mousePressed(MouseEvent e) {
-
+        if (paused) {
+            pauseOverlay.mousePressed(e);
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        if (paused) {
+            pauseOverlay.mouseReleased(e);
+        }
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-
+        if (paused) {
+            pauseOverlay.mouseMoved(e);
+        }
     }
 
     @Override
@@ -71,8 +96,10 @@ public class Playing extends State implements Statemethods{
         case KeyEvent.VK_SPACE:
             player.setJump(true);
             break;
-        case KeyEvent.VK_BACK_SPACE:
-            Gamestate.state = Gamestate.MENU;
+        case KeyEvent.VK_ESCAPE:
+            //flips the Gamestate
+            paused = !paused;
+            break;
         }
     }
 
@@ -89,6 +116,10 @@ public class Playing extends State implements Statemethods{
             player.setJump(false);
             break;
         }
+    }
+
+    public void unpauseGame() {
+        paused = false;
     }
 
     //Nothing is foolproof. Makes all boolean FALSE when window is no more in focus

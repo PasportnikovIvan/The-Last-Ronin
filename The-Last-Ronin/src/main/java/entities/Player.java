@@ -17,7 +17,7 @@ public class Player extends Entity{
     private int playerAction = IDLE;
     private boolean moving = false, attacking = false;
     private boolean left, up, right, down, jump; //Moving With Booleans
-    private float playerSpeed = 2.0f;
+    private float playerSpeed = 1.0f * Game.SCALE;
     private int[][] lvlData;
     private float xDrawOffset = 22 * Game.SCALE;
     private float yDrawOffset = 6 * Game.SCALE;
@@ -158,7 +158,7 @@ public class Player extends Entity{
     }
 
     private void updateXPos(float xSpeed) {
-        if (CanMoveHere(hitbox.x+xSpeed, hitbox.y, hitbox.width, hitbox.height, lvlData)) {
+        if (CanMoveHere(hitbox.x + xSpeed, hitbox.y, hitbox.width, hitbox.height, lvlData)) {
             hitbox.x += xSpeed;
         } else {
             hitbox.x = GetEntityXPosNextToWall(hitbox, xSpeed);

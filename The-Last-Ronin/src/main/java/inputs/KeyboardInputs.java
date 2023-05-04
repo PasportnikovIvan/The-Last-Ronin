@@ -1,13 +1,10 @@
 package inputs;
 
 import gamestates.Gamestate;
-import main.Game;
 import main.GamePanel;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
-import static utilz.Constants.Directions.*;
 
 //Adding inputs and making sure they respond to events on keyboard.
 public class KeyboardInputs implements KeyListener {
@@ -22,7 +19,7 @@ public class KeyboardInputs implements KeyListener {
 
     }
 
-    //making controllers WASD - starting direction
+    //making controllers WASD, Space - starting direction
     @Override
     public void keyPressed(KeyEvent e) {
         switch (Gamestate.state) {

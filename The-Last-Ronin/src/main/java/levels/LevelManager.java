@@ -3,7 +3,7 @@ package levels;
 import main.Game;
 import utilz.LoadSave;
 
-import java.awt.*;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 //level handler class

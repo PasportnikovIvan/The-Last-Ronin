@@ -21,7 +21,7 @@ public class Game implements Runnable {
 
     //Size calc
     public final static int TILES_DEFAULT_SIZE = 32;
-    public final static float SCALE = 2f; //how much should scale everything (player, enemies, etc.)
+    public final static float SCALE = 1.501f; //how much should scale everything (player, enemies, etc.)
     public final static int TILES_IN_WIDTH = 26;
     public final static int TILES_IN_HEIGHT = 14;
     public final static int TILES_SIZE = (int)(TILES_DEFAULT_SIZE * SCALE);
@@ -58,7 +58,11 @@ public class Game implements Runnable {
         case PLAYING:
             playing.update();
             break;
+        case OPTIONS:
+        case QUIT:
         default:
+            //is going to exit the program or terminate it
+            System.exit(0);
             break;
         }
     }
@@ -121,6 +125,7 @@ public class Game implements Runnable {
         }
     }
 
+    //Nothing is foolproof. Makes all boolean FALSE when window is no more in focus
     public void windowFocusLost() {
         if (Gamestate.state == Gamestate.PLAYING) {
             playing.getPlayer().resetDirBooleans();
