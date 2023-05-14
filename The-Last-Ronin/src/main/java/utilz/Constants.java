@@ -4,6 +4,88 @@ import main.Game;
 
 public class Constants {
 
+    //Constant value for the gravity in the game
+    //the lower gravity - the higher jump
+    public static final float GRAVITY = 0.04f * Game.SCALE;
+
+    //how fast going to animate (the lower num - the faster animation)
+    public static final int ANI_SPEED = 25;
+
+    //Constants class for the Enemies
+    public static class EnemyConstants {
+        public static final int MOB = 0;
+
+        //for enemy's action constants
+        public static final int IDLE = 0;
+        public static final int RUNNING = 1;
+        public static final int ATTACK = 2;
+        public static final int HIT = 3;
+        public static final int DEAD = 4;
+
+        //the default size of the sprite
+        public static final int MOB_WIDTH_DEFAULT = 64;
+        public static final int MOB_HEIGHT_DEFAULT = 40;
+
+        //the actual size of the sprite
+        public static final int MOB_WIDTH = (int)(MOB_WIDTH_DEFAULT * Game.SCALE);
+        public static final int MOB_HEIGHT = (int)(MOB_HEIGHT_DEFAULT * Game.SCALE);
+
+        public static final int MOB_DRAWOFFSET_X = (int)(21 * Game.SCALE);
+        public static final int MOB_DRAWOFFSET_Y = (int)(6 * Game.SCALE);
+
+        //how many sprites in action
+        public static int GetSpriteAmount(int enemy_type, int enemy_state) {
+            switch (enemy_type) {
+            case MOB:
+                switch (enemy_state) {
+                case IDLE:
+                    return 5;
+                case RUNNING:
+                case DEAD:
+                    return 6;
+                case ATTACK:
+                case HIT:
+                    return 4;
+                }
+            }
+
+            return 0;
+        }
+
+        //returning max health for each type of the enemy
+        public static int GetMaxHealth(int enemy_type) {
+            switch (enemy_type) {
+            case MOB:
+                return 15;
+            default:
+                return 1;
+            }
+        }
+
+        //the type of the Enemy making damage to the Player
+        public static int GetEnemyDMG(int enemy_type) {
+            switch (enemy_type) {
+            case MOB:
+                return 15;
+            default:
+                return 0;
+            }
+        }
+    }
+
+    //class for scaling background
+    public static class Environment {
+        public static final int BIG_CLOUD_WIDTH_DEFAULT = 448;
+        public static final int BIG_CLOUD_HEIGHT_DEFAULT = 101;
+        public static final int SMALL_CLOUD_WIDTH_DEFAULT = 74;
+        public static final int SMALL_CLOUD_HEIGHT_DEFAULT = 24;
+
+        public static final int BIG_CLOUD_WIDTH = (int)(BIG_CLOUD_WIDTH_DEFAULT * Game.SCALE);
+        public static final int BIG_CLOUD_HEIGHT = (int)(BIG_CLOUD_HEIGHT_DEFAULT * Game.SCALE);
+        public static final int SMALL_CLOUD_WIDTH = (int)(SMALL_CLOUD_WIDTH_DEFAULT * Game.SCALE);
+        public static final int SMALL_CLOUD_HEIGHT = (int)(SMALL_CLOUD_HEIGHT_DEFAULT * Game.SCALE);
+    }
+
     //class in Const class for UI, such as buttons, etc.
     public static class UI {
 

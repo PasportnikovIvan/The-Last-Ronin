@@ -1,8 +1,15 @@
 package utilz;
 
+import entities.Mob;
 import main.Game;
 
+import java.awt.Color;
+import java.awt.Point;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
+import static utilz.Constants.EnemyConstants.MOB;
 
 //class for helping methods
 //will have a few static methods, that take in some data and return some value
@@ -26,7 +33,8 @@ public class HelpMethods {
 
     //method going to check whether it is a tile or not, but also check the position is inside whe window
     private static boolean IsSolid(float x, float y, int[][] lvlData) {
-        if (x < 0 || x >= Game.GAME_WIDTH) {
+        int maxWidth = lvlData[0].length * Game.TILES_SIZE;
+        if (x < 0 || x >= maxWidth) {
             return true;
         }
         if (y < 0 || y >= Game.GAME_HEIGHT) {
@@ -36,7 +44,11 @@ public class HelpMethods {
         float xIndex = x / Game.TILES_SIZE;
         float yIndex = y / Game.TILES_SIZE;
 
-        int value = lvlData[(int)yIndex][(int)xIndex];
+        return IsTileSolid((int)xIndex, (int)yIndex, lvlData);
+    }
+
+    public static boolean IsTileSolid(int xTile, int yTile, int[][] lvlData) {
+        int value = lvlData[yTile][xTile];
 
         if (value >= 48 || value < 0 || value != 11) {
             return true;
@@ -78,5 +90,102 @@ public class HelpMethods {
             }
         }
         return true;
+    }
+
+    /**
+     * Checking the bottomleft of the enemy here +/- the xSpeed. Never check
+     * bottom right in case the enemy is going to the right. It would be more
+     * correct checking the bottomleft for left direction and bottomright for the
+     * right direction. But it won't have big effect in the game. The enemy will
+     * change direction sooner when there is an edge on the right side of the
+     * enemy, when it's going right.
+     */
+    public static boolean IsFloor(Rectangle2D.Float hitbox, float xSpeed, int[][] lvlData) {
+        if (xSpeed > 0) { //if going right
+            return IsSolid(hitbox.x + hitbox.width + xSpeed, hitbox.y + hitbox.height + 1, lvlData);
+        } else {
+            return IsSolid(hitbox.x + xSpeed, hitbox.y + hitbox.height + 1, lvlData);
+        }
+    }
+
+    public static boolean IsAllTilesWalkable(int xStart, int xEnd, int y, int[][] lvlData) {
+        for (int i = 0; i < xEnd - xStart; i++) {
+            if (IsTileSolid(xStart + i, y, lvlData)) {
+                return false;
+            }
+            if (!IsTileSolid(xStart + i, y + 1, lvlData)) { //for the tiles under
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    //checking if there is a line of sight between two points
+    public static boolean IsSightClear(int[][] lvlData, Rectangle2D.Float firstHitbox, Rectangle2D.Float secondHitbox, int yTile) {
+        int firstXTile = (int)(firstHitbox.x / Game.TILES_SIZE);
+        int secondXTile = (int)(secondHitbox.x / Game.TILES_SIZE);
+
+        //check to know bigger tile for the FOR loop
+        if (firstXTile > secondXTile) {
+            return IsAllTilesWalkable(secondXTile, firstXTile, yTile, lvlData);
+        } else {
+            return IsAllTilesWalkable(firstXTile, secondXTile, yTile, lvlData);
+        }
+    }
+
+    //The option to draw levels
+    //There is image file, where each pixel is a position on the level
+    //(for example) img file (4x4) = Level, 4x4 tiles
+    //Each pixel have 3 colors (Red, Green, Blue)
+    //the color value = the spriteID
+    //0-255 in value (48 for now, because of outside sprites 12 width x 4 height)
+    //Color color = new Color(red = spriteID, green = enemies, blue = objects)
+    public static int[][] GetLevelData(BufferedImage img) {
+        int[][] lvlData = new int[img.getHeight()][img.getWidth()];
+
+        //using size of the img to loop through each pixel and add the pixel to lvlData
+        for (int j = 0; j < img.getHeight(); j++) {
+            for (int i = 0; i < img.getWidth(); i++) {
+                Color color = new Color(img.getRGB(i, j));
+                int value = color.getRed();
+                if (value >= 48) {
+                    value = 0;
+                }
+                lvlData[j][i] = value;
+            }
+        }
+        return lvlData;
+    }
+
+    //GET method is same as GetLvlData for the all level
+    public static ArrayList<Mob> GetMobs(BufferedImage img) {
+        ArrayList<Mob> list = new ArrayList<>();
+
+        //using size of the img to loop through each pixel and add the Enemy pixel to lvlData
+        //going over the img and if finds color with GREEN value equals "MOB" (0), then adds this position to the list
+        for (int j = 0; j < img.getHeight(); j++) {
+            for (int i = 0; i < img.getWidth(); i++) {
+                Color color = new Color(img.getRGB(i, j));
+                int value = color.getGreen();
+                if (value == MOB) {
+                    list.add(new Mob(i * Game.TILES_SIZE, j * Game.TILES_SIZE));
+                }
+            }
+        }
+        return list;
+    }
+
+    public static Point GetPlayerSpawn(BufferedImage img) {
+        for (int j = 0; j < img.getHeight(); j++) {
+            for (int i = 0; i < img.getWidth(); i++) {
+                Color color = new Color(img.getRGB(i, j));
+                int value = color.getGreen();
+                if (value == 100) {
+                    return new Point(i * Game.TILES_SIZE, j * Game.TILES_SIZE);
+                }
+            }
+        }
+        return new Point(1 * Game.TILES_SIZE, 1 * Game.TILES_SIZE);
     }
 }

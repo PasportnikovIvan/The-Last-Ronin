@@ -3,6 +3,7 @@ package main;
 import gamestates.Gamestate;
 import gamestates.Menu;
 import gamestates.Playing;
+import utilz.LoadSave;
 
 import java.awt.Graphics;
 
@@ -21,9 +22,9 @@ public class Game implements Runnable {
 
     //Size calc
     public final static int TILES_DEFAULT_SIZE = 32;
-    public final static float SCALE = 1.501f; //how much should scale everything (player, enemies, etc.)
-    public final static int TILES_IN_WIDTH = 26;
-    public final static int TILES_IN_HEIGHT = 14;
+    public final static float SCALE = 1.76f; //how much should scale everything (player, enemies, etc.) (2, 1.51)
+    public final static int TILES_IN_WIDTH = 26; //visible tiles
+    public final static int TILES_IN_HEIGHT = 14; //visible tiles
     public final static int TILES_SIZE = (int)(TILES_DEFAULT_SIZE * SCALE);
     public final static int GAME_WIDTH = TILES_SIZE * TILES_IN_WIDTH;
     public final static int GAME_HEIGHT = TILES_SIZE * TILES_IN_HEIGHT;
@@ -33,6 +34,7 @@ public class Game implements Runnable {
 
         gamePanel = new GamePanel(this);
         gameWindow = new GameWindow(gamePanel);
+        gamePanel.setFocusable(true);
         gamePanel.requestFocus(); //requests that gets the input focus
 
         startGameLoop();

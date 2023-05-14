@@ -17,9 +17,9 @@ public class GameWindow {
 
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //exit on close
         jframe.add(gamePanel);
-//        jframe.setLocationRelativeTo(null);
         jframe.setResizable(false); //to not resize window
         jframe.pack(); //to fit the preferred size
+        jframe.setLocationRelativeTo(null); //centering the game window
         jframe.setVisible(true); //makes the window open
         //Nothing is foolproof. Makes all boolean FALSE when window is no more in focus
         jframe.addWindowFocusListener(new WindowFocusListener() {
