@@ -11,6 +11,44 @@ public class Constants {
     //how fast going to animate (the lower num - the faster animation)
     public static final int ANI_SPEED = 25;
 
+    //Constants class for the Objects
+    public static class ObjectConstants {
+        public static final int RED_POTION = 0;
+        public static final int BLUE_POTION = 1;
+        public static final int BARREL = 2;
+        public static final int BOX = 3;
+        public static final int SPIKE = 4;
+
+        public static final int RED_POTION_VALUE = 15; //health
+        public static final int BLUE_POTION_VALUE = 10; //power bar
+
+        public static final int CONTAINER_WIDTH_DEFAULT = 40;
+        public static final int CONTAINER_HEIGHT_DEFAULT = 30;
+        public static final int CONTAINER_WIDTH = (int)(Game.SCALE * CONTAINER_WIDTH_DEFAULT);
+        public static final int CONTAINER_HEIGHT = (int)(Game.SCALE * CONTAINER_HEIGHT_DEFAULT);
+
+        public static final int POTION_WIDTH_DEFAULT = 12;
+        public static final int POTION_HEIGHT_DEFAULT = 16;
+        public static final int POTION_WIDTH = (int)(Game.SCALE * POTION_WIDTH_DEFAULT);
+        public static final int POTION_HEIGHT = (int)(Game.SCALE * POTION_HEIGHT_DEFAULT);
+
+        public static final int SPIKE_WIDTH_DEFAULT = 32;
+        public static final int SPIKE_HEIGHT_DEFAULT = 32;
+        public static final int SPIKE_WIDTH = (int)(Game.SCALE * SPIKE_WIDTH_DEFAULT);
+        public static final int SPIKE_HEIGHT = (int)(Game.SCALE * SPIKE_HEIGHT_DEFAULT);
+
+        //how many sprites in action
+        public static int GetSpriteAmount(int object_type) {
+            switch (object_type) {
+            case RED_POTION, BLUE_POTION:
+                return 7;
+            case BARREL, BOX:
+                return 8;
+            }
+            return 1;
+        }
+    }
+
     //Constants class for the Enemies
     public static class EnemyConstants {
         public static final int MOB = 0;
@@ -135,9 +173,11 @@ public class Constants {
         public static final int RUNNING = 1;
         public static final int JUMP = 2;
         public static final int FALLING = 3;
-        public static final int GROUND = 4;
+        public static final int ATTACK_1 = 4;
         public static final int HIT = 5;
-        public static final int ATTACK_1 = 6;
+        public static final int DEAD = 6;
+
+        //for the future game updates
         public static final int ATTACK_JUMP_1 = 7;
         public static final int ATTACK_JUMP_2 = 8;
 
@@ -146,6 +186,7 @@ public class Constants {
 
             switch (player_action) {
             case RUNNING:
+            case DEAD:
                 return 6;
             case IDLE:
                 return 5;
@@ -156,8 +197,6 @@ public class Constants {
             case HIT:
             case JUMP:
                 return 3;
-            case GROUND:
-                return 2;
             case FALLING:
             default:
                 return 1;

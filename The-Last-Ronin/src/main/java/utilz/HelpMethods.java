@@ -2,6 +2,9 @@ package utilz;
 
 import entities.Mob;
 import main.Game;
+import objects.GameContainer;
+import objects.Potion;
+import objects.Spike;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -10,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import static utilz.Constants.EnemyConstants.MOB;
+import static utilz.Constants.ObjectConstants.*;
 
 //class for helping methods
 //will have a few static methods, that take in some data and return some value
@@ -140,7 +144,7 @@ public class HelpMethods {
     //Each pixel have 3 colors (Red, Green, Blue)
     //the color value = the spriteID
     //0-255 in value (48 for now, because of outside sprites 12 width x 4 height)
-    //Color color = new Color(red = spriteID, green = enemies, blue = objects)
+    //Color color = new Color(red = spriteID, green = enemies and player, blue = objects)
     public static int[][] GetLevelData(BufferedImage img) {
         int[][] lvlData = new int[img.getHeight()][img.getWidth()];
 
@@ -158,7 +162,7 @@ public class HelpMethods {
         return lvlData;
     }
 
-    //GET method is same as GetLvlData for the all level
+    //GET method is same as GetLvlData for the all levels
     public static ArrayList<Mob> GetMobs(BufferedImage img) {
         ArrayList<Mob> list = new ArrayList<>();
 
@@ -176,6 +180,7 @@ public class HelpMethods {
         return list;
     }
 
+    //GET method is same as GetLvlData for the all levels
     public static Point GetPlayerSpawn(BufferedImage img) {
         for (int j = 0; j < img.getHeight(); j++) {
             for (int i = 0; i < img.getWidth(); i++) {
@@ -187,5 +192,50 @@ public class HelpMethods {
             }
         }
         return new Point(1 * Game.TILES_SIZE, 1 * Game.TILES_SIZE);
+    }
+
+    //GET method is same as GetLvlData for the all levels
+    public static ArrayList<Potion> GetPotions(BufferedImage img) {
+        ArrayList<Potion> list = new ArrayList<>();
+        for (int j = 0; j < img.getHeight(); j++) {
+            for (int i = 0; i < img.getWidth(); i++) {
+                Color color = new Color(img.getRGB(i, j));
+                int value = color.getBlue();
+                if (value == RED_POTION || value == BLUE_POTION) {
+                    list.add(new Potion(i * Game.TILES_SIZE, j * Game.TILES_SIZE, value));
+                }
+            }
+        }
+        return list;
+    }
+
+    //GET method is same as GetLvlData for the all levels
+    public static ArrayList<GameContainer> GetContainers(BufferedImage img) {
+        ArrayList<GameContainer> list = new ArrayList<>();
+        for (int j = 0; j < img.getHeight(); j++) {
+            for (int i = 0; i < img.getWidth(); i++) {
+                Color color = new Color(img.getRGB(i, j));
+                int value = color.getBlue();
+                if (value == BOX || value == BARREL) {
+                    list.add(new GameContainer(i * Game.TILES_SIZE, j * Game.TILES_SIZE, value));
+                }
+            }
+        }
+        return list;
+    }
+
+    //GET method is same as GetLvlData for the all levels
+    public static ArrayList<Spike> GetSpikes(BufferedImage img) {
+        ArrayList<Spike> list = new ArrayList<>();
+        for (int j = 0; j < img.getHeight(); j++) {
+            for (int i = 0; i < img.getWidth(); i++) {
+                Color color = new Color(img.getRGB(i, j));
+                int value = color.getBlue();
+                if (value == SPIKE) {
+                    list.add(new Spike(i * Game.TILES_SIZE, j * Game.TILES_SIZE, SPIKE));
+                }
+            }
+        }
+        return list;
     }
 }

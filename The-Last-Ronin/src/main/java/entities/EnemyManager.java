@@ -60,9 +60,11 @@ public class EnemyManager {
     public void checkEnemyHit(Rectangle2D.Float attackBox) {
         for (Mob m : mobs) {
             if (m.isActive()) {
-                if (attackBox.intersects(m.getHitbox())) { //attack box is overlapped
-                    m.hurt(10);
-                    return;
+                if (m.getCurrentHealth() > 0) { //fixed bug with immortal enemies (spam attack to the enemy)
+                    if (attackBox.intersects(m.getHitbox())) { //attack box is overlapped
+                        m.hurt(10);
+                        return;
+                    }
                 }
             }
         }

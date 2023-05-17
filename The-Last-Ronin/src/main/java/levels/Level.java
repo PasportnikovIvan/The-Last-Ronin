@@ -2,6 +2,10 @@ package levels;
 
 import entities.Mob;
 import main.Game;
+import objects.GameContainer;
+import objects.Potion;
+import objects.Spike;
+import utilz.HelpMethods;
 import static utilz.HelpMethods.GetLevelData;
 import static utilz.HelpMethods.GetMobs;
 import static utilz.HelpMethods.GetPlayerSpawn;
@@ -24,6 +28,9 @@ public class Level {
     private BufferedImage img;
     private int[][] lvlData;
     private ArrayList<Mob> mobs;
+    private ArrayList<Potion> potions;
+    private ArrayList<Spike> spikes;
+    private ArrayList<GameContainer> containers;
     private int lvlTilesWide;
     private int maxTilesOffset;
     private int maxLvlOffsetX;
@@ -33,8 +40,23 @@ public class Level {
         this.img = img;
         createLevelData();
         createEnemies();
+        createPotions();
+        createContainers();
+        createSpikes();
         calcLvlOffsets();
         calcPlayerSpawn();
+    }
+
+    private void createSpikes() {
+        spikes = HelpMethods.GetSpikes(img);
+    }
+
+    private void createContainers() {
+        containers = HelpMethods.GetContainers(img);
+    }
+
+    private void createPotions() {
+        potions = HelpMethods.GetPotions(img);
     }
 
     private void calcPlayerSpawn() {
@@ -73,5 +95,17 @@ public class Level {
 
     public Point getPlayerSpawn() {
         return playerSpawn;
+    }
+
+    public ArrayList<Potion> getPotions() {
+        return potions;
+    }
+
+    public ArrayList<GameContainer> getContainers() {
+        return containers;
+    }
+
+    public ArrayList<Spike> getSpikes() {
+        return spikes;
     }
 }
