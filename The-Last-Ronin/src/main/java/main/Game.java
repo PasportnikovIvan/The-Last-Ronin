@@ -1,8 +1,10 @@
 package main;
 
+import gamestates.GameOptions;
 import gamestates.Gamestate;
 import gamestates.Menu;
 import gamestates.Playing;
+import ui.AudioOptions;
 import utilz.LoadSave;
 
 import java.awt.Graphics;
@@ -19,10 +21,12 @@ public class Game implements Runnable {
 
     private Playing playing;
     private Menu menu;
+    private GameOptions gameOptions;
+    private AudioOptions audioOptions;
 
     //Size calc
     public final static int TILES_DEFAULT_SIZE = 32;
-    public final static float SCALE = 1.775f; //how much should scale everything (player, enemies, etc.) (2, 1.51)
+    public final static float SCALE = 1.6f; //how much should scale everything (player, enemies, etc.) (2, 1.51)
     public final static int TILES_IN_WIDTH = 26; //visible tiles
     public final static int TILES_IN_HEIGHT = 14; //visible tiles
     public final static int TILES_SIZE = (int)(TILES_DEFAULT_SIZE * SCALE);
@@ -41,8 +45,10 @@ public class Game implements Runnable {
     }
 
     private void initClasses() {
+        audioOptions = new AudioOptions();
         menu = new Menu(this);
         playing = new Playing(this);
+        gameOptions = new GameOptions(this);
     }
 
     //Creating Thread for game loop.
@@ -61,6 +67,8 @@ public class Game implements Runnable {
             playing.update();
             break;
         case OPTIONS:
+            gameOptions.update();
+            break;
         case QUIT:
         default:
             //is going to exit the program or terminate it
@@ -76,6 +84,9 @@ public class Game implements Runnable {
             break;
         case PLAYING:
             playing.draw(g);
+            break;
+        case OPTIONS:
+            gameOptions.draw(g);
             break;
         default:
             break;
@@ -140,5 +151,13 @@ public class Game implements Runnable {
 
     public Playing getPlaying() {
         return playing;
+    }
+
+    public GameOptions getGameOptions() {
+        return gameOptions;
+    }
+
+    public AudioOptions getAudioOptions() {
+        return audioOptions;
     }
 }
