@@ -36,6 +36,7 @@ public class LoadSave {
     public static final String TRAP_ATLAS = "trap_atlas.png";
     public static final String ARCHER_ATLAS = "archer_atlas.png";
     public static final String ARROW = "arrow.png";
+    public static final String DEATH_SCREEN = "death_screen.png";
 
     //getting all atlases
     public static BufferedImage GetSpriteAtlas(String fileName) {

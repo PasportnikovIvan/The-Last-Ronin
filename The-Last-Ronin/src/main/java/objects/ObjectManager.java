@@ -178,6 +178,7 @@ public class ObjectManager {
                 }
             }
             a.update();
+            //timing of the shooting
             if (a.getAniIndex() == 4 && a.getAniTick() == 0) {
                 shootArcher(a);
             }
