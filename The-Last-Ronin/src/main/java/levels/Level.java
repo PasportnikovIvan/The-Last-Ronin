@@ -2,6 +2,7 @@ package levels;
 
 import entities.Mob;
 import main.Game;
+import objects.Archer;
 import objects.GameContainer;
 import objects.Potion;
 import objects.Spike;
@@ -31,6 +32,7 @@ public class Level {
     private ArrayList<Potion> potions;
     private ArrayList<Spike> spikes;
     private ArrayList<GameContainer> containers;
+    private ArrayList<Archer> archers;
     private int lvlTilesWide;
     private int maxTilesOffset;
     private int maxLvlOffsetX;
@@ -43,8 +45,13 @@ public class Level {
         createPotions();
         createContainers();
         createSpikes();
+        createArchers();
         calcLvlOffsets();
         calcPlayerSpawn();
+    }
+
+    private void createArchers() {
+        archers = HelpMethods.GetArchers(img);
     }
 
     private void createSpikes() {
@@ -107,5 +114,9 @@ public class Level {
 
     public ArrayList<Spike> getSpikes() {
         return spikes;
+    }
+
+    public ArrayList<Archer> getArchers() {
+        return archers;
     }
 }

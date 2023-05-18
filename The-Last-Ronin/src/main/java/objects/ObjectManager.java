@@ -3,8 +3,12 @@ package objects;
 import entities.Player;
 import gamestates.Playing;
 import levels.Level;
+import main.Game;
 import utilz.LoadSave;
 import static utilz.Constants.ObjectConstants.*;
+import static utilz.HelpMethods.CanArcherSeePlayer;
+import static utilz.HelpMethods.IsProjectileHittingLevel;
+import static utilz.Constants.Projectiles.*;
 
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
@@ -16,10 +20,13 @@ public class ObjectManager {
 
     private Playing playing;
     private BufferedImage[][] potionImgs, containerImgs;
-    private BufferedImage spikeImg;
+    private BufferedImage[] archerImgs;
+    private BufferedImage spikeImg, arrowImg;
     private ArrayList<Potion> potions;
     private ArrayList<GameContainer> containers;
     private ArrayList<Spike> spikes;
+    private ArrayList<Archer> archers;
+    private ArrayList<Projectile> projectiles = new ArrayList<>(); //not using the Level for the projectiles. Every time archer shoot - arrow adds to array
 
     public ObjectManager(Playing playing) {
         this.playing = playing;
@@ -75,6 +82,8 @@ public class ObjectManager {
         potions = new ArrayList<>(newLevel.getPotions());
         containers = new ArrayList<>(newLevel.getContainers());
         spikes = newLevel.getSpikes(); //spikes are static - no need to reset them
+        archers = newLevel.getArchers(); //?TO_DO? if player can kill archers I'll add way to kill them so will be needed to make a new lists like poisons
+        projectiles.clear();
     }
 
     private void loadImgs() {
@@ -97,9 +106,18 @@ public class ObjectManager {
         }
 
         spikeImg = LoadSave.GetSpriteAtlas(LoadSave.TRAP_ATLAS);
+
+        BufferedImage archerSprite = LoadSave.GetSpriteAtlas(LoadSave.ARCHER_ATLAS);
+        archerImgs = new BufferedImage[7];
+
+        for (int i = 0; i < archerImgs.length; i++) {
+            archerImgs[i] = archerSprite.getSubimage( 40 * i, 0, 40, 35);
+        }
+
+        arrowImg = LoadSave.GetSpriteAtlas(LoadSave.ARROW);
     }
 
-    public void update() {
+    public void update(int[][] lvlData, Player player) {
         for (Potion p : potions) {
             if (p.isActive()) {
                 p.update();
@@ -111,12 +129,101 @@ public class ObjectManager {
                 gc.update();
             }
         }
+
+        updateArchers(lvlData, player);
+        updateProjectiles(lvlData, player);
+    }
+
+    private void updateProjectiles(int[][] lvlData, Player player) {
+        for (Projectile p : projectiles) {
+            if (p.isActive()) {
+                p.updatePos();
+                if (p.getHitbox().intersects(player.getHitbox())) {
+                    player.changeHealth(-25);
+                    p.setActive(false); //collision of the projectiles with player
+                } else if (IsProjectileHittingLevel(p, lvlData)) { //collision of the projectiles with level
+                    p.setActive(false);
+                }
+            }
+        }
+    }
+
+    private boolean isPlayerInRange(Archer a, Player player) {
+        int absValue = (int) Math.abs(player.getHitbox().x - a.getHitbox().x);
+        return absValue <= Game.TILES_SIZE * 5;
+    }
+
+    private boolean isPlayerInfrontOfArcher(Archer a, Player player) {
+        if (a.getObjType() == ARCHER_LEFT) {
+            if (a.getHitbox().x > player.getHitbox().x) {
+                return true;
+            }
+        } else if (a.getHitbox().x < player.getHitbox().x) {
+            return true;
+        }
+        return false;
+    }
+
+    private void updateArchers(int[][] lvlData, Player player) {
+        for (Archer a : archers) {
+            if (!a.doAnimation) { //if the archer is not animating
+                if (a.getTileY() == player.getTileY()) { //tileY is the same
+                    if (isPlayerInRange(a, player)) { //is player in range
+                        if (isPlayerInfrontOfArcher(a, player)) { //is player infront of archer
+                            if (CanArcherSeePlayer(lvlData, player.getHitbox(), a.getHitbox(), a.getTileY())) { //checking line of sight
+                                a.setAnimation(true);
+                            }
+                        }
+                    }
+                }
+            }
+            a.update();
+            if (a.getAniIndex() == 4 && a.getAniTick() == 0) {
+                shootArcher(a);
+            }
+        }
+    }
+
+    private void shootArcher(Archer a) {
+        int dir = 1;
+        if (a.getObjType() == ARCHER_LEFT) {
+            dir = -1;
+        }
+        projectiles.add(new Projectile((int)(a.getHitbox().x), (int)(a.getHitbox().y), dir));
     }
 
     public void draw(Graphics g, int xLvlOffset) {
         drawPotions(g, xLvlOffset);
         drawContainers(g, xLvlOffset);
         drawTraps(g, xLvlOffset);
+        drawArchers(g, xLvlOffset);
+        drawProjectiles(g, xLvlOffset);
+    }
+
+    private void drawProjectiles(Graphics g, int xLvlOffset) {
+        for (Projectile p : projectiles) {
+            if (p.isActive()) {
+                if (p.getDir() == -1) {
+                    g.drawImage(arrowImg, (int)(p.getHitbox().x - xLvlOffset), (int)(p.getHitbox().y), ARROW_WIDTH, ARROW_HEIGHT, null);
+                } else {
+                    g.drawImage(arrowImg, (int)(p.getHitbox().x - xLvlOffset), (int)(p.getHitbox().y), -ARROW_WIDTH, ARROW_HEIGHT, null);
+                }
+            }
+        }
+    }
+
+    private void drawArchers(Graphics g, int xLvlOffset) {
+        for (Archer a : archers) {
+
+            int x = (int)(a.getHitbox().x - xLvlOffset);
+            int width = ARCHER_WIDTH;
+            //flipping archers
+            if (a.getObjType() == ARCHER_RIGHT) {
+                x += width;
+                width *= -1;
+            }
+            g.drawImage(archerImgs[a.getAniIndex()], x, (int)(a.getHitbox().y), width, ARCHER_HEIGHT, null);
+        }
     }
 
     private void drawTraps(Graphics g, int xLvlOffset) {
@@ -158,6 +265,9 @@ public class ObjectManager {
         }
         for (GameContainer gc : containers) {
             gc.reset();
+        }
+        for (Archer a : archers) {
+            a.reset();
         }
     }
 }

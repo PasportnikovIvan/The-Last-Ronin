@@ -34,6 +34,9 @@ public class GameObject {
                 if (objType == BARREL || objType == BOX) {
                     doAnimation = false;
                     active = false;
+                } else if (objType == ARCHER_LEFT || objType == ARCHER_RIGHT) { //one animation per shot
+                    //archer shoot once and then check again if the player is visible
+                    doAnimation = false;
                 }
             }
         }
@@ -44,10 +47,11 @@ public class GameObject {
         aniTick = 0;
         active = true;
 
-        if (objType == BARREL || objType == BOX)
+        if (objType == BARREL || objType == BOX || objType == ARCHER_LEFT || objType == ARCHER_RIGHT) {
             doAnimation = false;
-        else
+        } else {
             doAnimation = true;
+        }
     }
 
     protected void initHitbox(int width, int height) {
@@ -90,5 +94,9 @@ public class GameObject {
 
     public int getAniIndex() {
         return aniIndex;
+    }
+
+    public int getAniTick() {
+        return aniTick;
     }
 }

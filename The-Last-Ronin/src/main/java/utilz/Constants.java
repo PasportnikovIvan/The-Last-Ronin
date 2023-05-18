@@ -11,6 +11,16 @@ public class Constants {
     //how fast going to animate (the lower num - the faster animation)
     public static final int ANI_SPEED = 25;
 
+    //Constants class for the projectiles
+    public static class Projectiles {
+        public static final int ARROW_WIDTH_DEFAULT = 15;
+        public static final int ARROW_HEIGHT_DEFAULT = 15;
+
+        public static final int ARROW_WIDTH = (int)(Game.SCALE * ARROW_WIDTH_DEFAULT);
+        public static final int ARROW_HEIGHT = (int)(Game.SCALE * ARROW_HEIGHT_DEFAULT);
+        public static final float SPEED = 0.75f * Game.SCALE;
+    }
+
     //Constants class for the Objects
     public static class ObjectConstants {
         public static final int RED_POTION = 0;
@@ -18,6 +28,8 @@ public class Constants {
         public static final int BARREL = 2;
         public static final int BOX = 3;
         public static final int SPIKE = 4;
+        public static final int ARCHER_LEFT = 5; //different direction
+        public static final int ARCHER_RIGHT = 6;
 
         public static final int RED_POTION_VALUE = 15; //health
         public static final int BLUE_POTION_VALUE = 10; //power bar
@@ -37,6 +49,11 @@ public class Constants {
         public static final int SPIKE_WIDTH = (int)(Game.SCALE * SPIKE_WIDTH_DEFAULT);
         public static final int SPIKE_HEIGHT = (int)(Game.SCALE * SPIKE_HEIGHT_DEFAULT);
 
+        public static final int ARCHER_WIDTH_DEFAULT = 40;
+        public static final int ARCHER_HEIGHT_DEFAULT = 35;
+        public static final int ARCHER_WIDTH = (int)(Game.SCALE * ARCHER_WIDTH_DEFAULT);
+        public static final int ARCHER_HEIGHT = (int)(Game.SCALE * ARCHER_HEIGHT_DEFAULT);
+
         //how many sprites in action
         public static int GetSpriteAmount(int object_type) {
             switch (object_type) {
@@ -44,6 +61,8 @@ public class Constants {
                 return 7;
             case BARREL, BOX:
                 return 8;
+            case ARCHER_LEFT, ARCHER_RIGHT:
+                return 7;
             }
             return 1;
         }
