@@ -137,9 +137,9 @@ public class Playing extends State implements Statemethods{
         drawClouds(g);
 
         levelManager.draw(g, xLvlOffset);
+        objectManager.draw(g, xLvlOffset);
         player.render(g, xLvlOffset);
         enemyManager.draw(g, xLvlOffset);
-        objectManager.draw(g, xLvlOffset);
 
         if (paused) {
             g.setColor(new Color(0, 0, 0, 150));
@@ -198,6 +198,8 @@ public class Playing extends State implements Statemethods{
             //Left click - attack
             if (e.getButton() == MouseEvent.BUTTON1) {
                 player.setAttacking(true);
+            } else if (e.getButton() == MouseEvent.BUTTON3) { //Right click - dash attack
+                player.powerAttack();
             }
         }
     }
