@@ -63,9 +63,9 @@ public class Playing extends State implements Statemethods{
     }
 
     public void loadNextLevel() {
-        resetAll();
         levelManager.loadNextLevel();
         player.setSpawn(levelManager.getCurrentLevel().getPlayerSpawn());
+        resetAll();
     }
 
     //method is called to load enemies and objects from the start of the level, otherwise game won't have any of them
