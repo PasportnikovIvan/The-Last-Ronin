@@ -63,10 +63,7 @@ public class GameOverOverlay {
     }
 
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            playing.resetAll(); //going to reset all progress in case of death
-            Gamestate.state = Gamestate.MENU;
-        }
+
     }
 
     //check pressing inside the button
@@ -88,12 +85,13 @@ public class GameOverOverlay {
     public void mouseReleased(MouseEvent e) {
         if (isIn(menu, e)) {
             if (menu.isMousePressed()) {
-                playing.resetAll();
-                Gamestate.state = Gamestate.MENU;
+                playing.resetAll(); //going to reset all progress in case of death
+                playing.setGamestate(Gamestate.MENU);
             }
         } else if (isIn(replay, e)) {
             if (replay.isMousePressed()) {
-                playing.resetAll();
+                playing.resetAll(); //going to reset all progress in case of death
+                playing.getGame().getAudioPlayer().setLevelSong(playing.getLevelManager().getLvlIndex()); //continue the music
             }
         }
 

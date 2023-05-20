@@ -79,7 +79,11 @@ public class Menu extends State implements Statemethods{
             if (isIn(e, mb)) {
                 //is pressed before
                 if (mb.isMousePressed()) {
-                    mb.applyGamestate();
+                    mb.applyGamestate(); //changing the gamestate in the button
+                }
+                //applying music after pressing the button
+                if (mb.getState() == Gamestate.PLAYING) {
+                    game.getAudioPlayer().setLevelSong(game.getPlaying().getLevelManager().getLvlIndex());
                 }
                 break;
             }

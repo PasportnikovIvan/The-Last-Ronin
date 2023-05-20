@@ -1,5 +1,6 @@
 package entities;
 
+import audio.AudioPlayer;
 import main.Game;
 
 import static utilz.Constants.Directions.*;
@@ -10,7 +11,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 
-//The class of the actual enemy Crabby
+//The class of the actual enemy Mob
 public class Mob extends Enemy {
 
     private int attackBoxOffsetX;

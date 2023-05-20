@@ -1,6 +1,7 @@
 package utilz;
 
 import entities.Mob;
+import gamestates.Playing;
 import main.Game;
 import objects.Archer;
 import objects.GameContainer;

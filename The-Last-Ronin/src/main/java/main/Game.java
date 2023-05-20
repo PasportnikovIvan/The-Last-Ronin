@@ -1,5 +1,6 @@
 package main;
 
+import audio.AudioPlayer;
 import gamestates.GameOptions;
 import gamestates.Gamestate;
 import gamestates.Menu;
@@ -23,6 +24,7 @@ public class Game implements Runnable {
     private Menu menu;
     private GameOptions gameOptions;
     private AudioOptions audioOptions;
+    private AudioPlayer audioPlayer;
 
     //Size calc
     public final static int TILES_DEFAULT_SIZE = 32;
@@ -45,7 +47,8 @@ public class Game implements Runnable {
     }
 
     private void initClasses() {
-        audioOptions = new AudioOptions();
+        audioOptions = new AudioOptions(this);
+        audioPlayer = new AudioPlayer();
         menu = new Menu(this);
         playing = new Playing(this);
         gameOptions = new GameOptions(this);
@@ -159,5 +162,9 @@ public class Game implements Runnable {
 
     public AudioOptions getAudioOptions() {
         return audioOptions;
+    }
+
+    public AudioPlayer getAudioPlayer() {
+        return audioPlayer;
     }
 }

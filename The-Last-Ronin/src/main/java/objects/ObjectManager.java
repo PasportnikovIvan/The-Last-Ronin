@@ -1,5 +1,6 @@
 package objects;
 
+import audio.AudioPlayer;
 import entities.Player;
 import gamestates.Playing;
 import levels.Level;
@@ -67,6 +68,7 @@ public class ObjectManager {
             if (gc.isActive() && !gc.doAnimation) {
                 if (gc.getHitbox().intersects(attackbox)) {
                     gc.setAnimation(true);
+                    playing.getGame().getAudioPlayer().playEffect(AudioPlayer.BOX_BREAK); //breaking sound
                     int type = 0;
                     if (gc.getObjType() == BARREL) {
                         type = 1;
@@ -181,6 +183,7 @@ public class ObjectManager {
             //timing of the shooting
             if (a.getAniIndex() == 4 && a.getAniTick() == 0) {
                 shootArcher(a);
+                playing.getGame().getAudioPlayer().playEffect(AudioPlayer.ARROW_WHIZZ);
             }
         }
     }

@@ -13,9 +13,10 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 //class Game Options of the Gamestates
+//this class making able to access the sound controls
 public class GameOptions extends State implements Statemethods {
 
-    private AudioOptions audioOptions;
+    private AudioOptions audioOptions; //the sound controls
     private BufferedImage backgroundImg, optionsBackgroundImg;
     private int bgOptX, bgOptY, bgOptW, bgOptH;
     private UrmButton menuB;
