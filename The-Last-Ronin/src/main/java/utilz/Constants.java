@@ -2,6 +2,7 @@ package utilz;
 
 import main.Game;
 
+//Constant class of the Game constants ond other Constant classes in this class
 public class Constants {
 
     //Constant value for the gravity in the game
@@ -10,6 +11,23 @@ public class Constants {
 
     //how fast going to animate (the lower num - the faster animation)
     public static final int ANI_SPEED = 25;
+
+    //Constants class for the Emotions effects
+    public static class Emotion {
+        public static final int QUESTION = 0;
+        public static final int XCROSS = 1;
+
+        public static final int EMOTION_WIDTH = (int)(14 * Game.SCALE);
+        public static final int EMOTION_HEIGHT = (int)(12 * Game.SCALE);
+
+        public static int GetSpriteAmount(int type) {
+            switch (type) {
+            case QUESTION, XCROSS:
+                return 5;
+            }
+            return 0;
+        }
+    }
 
     //Constants class for the projectiles
     public static class Projectiles {
@@ -30,8 +48,11 @@ public class Constants {
         public static final int SPIKE = 4;
         public static final int ARCHER_LEFT = 5; //different direction
         public static final int ARCHER_RIGHT = 6;
+        public static final int BAMBOO_ONE = 7;
+        public static final int BAMBOO_TWO = 8;
+        public static final int BAMBOO_THREE = 9;
 
-        public static final int RED_POTION_VALUE = 15; //health
+        public static final int RED_POTION_VALUE = 20; //health
         public static final int BLUE_POTION_VALUE = 10; //power bar
 
         public static final int CONTAINER_WIDTH_DEFAULT = 40;
@@ -66,11 +87,61 @@ public class Constants {
             }
             return 1;
         }
+
+        //GET method for drawing bamboos and sakura in the level
+        public static int GetBambooOffsetX(int bambooType) {
+            switch (bambooType) {
+            case BAMBOO_ONE:
+                return (Game.TILES_SIZE / 2) - (GetBambooWidth(bambooType) / 2);
+            case BAMBOO_TWO:
+                return (int)(Game.TILES_SIZE / 2.5f);
+            case BAMBOO_THREE:
+                return (int)(Game.TILES_SIZE / 1.65f);
+            }
+            return 0;
+        }
+
+        //GET method for drawing bamboos and sakura in the level
+        public static int GetBambooOffsetY(int bambooType) {
+            switch (bambooType) {
+            case BAMBOO_ONE:
+                return -GetBambooHeight(bambooType) + Game.TILES_SIZE * 1;
+            case BAMBOO_TWO, BAMBOO_THREE:
+                return -GetBambooHeight(bambooType) + (int)(Game.TILES_SIZE / 1.25f);
+            }
+            return 0;
+        }
+
+        //GET method for drawing bamboos and sakura in the level
+        public static int GetBambooWidth(int bambooType) {
+            switch (bambooType) {
+            case BAMBOO_ONE:
+                return (int)(39 * Game.SCALE);
+            case BAMBOO_TWO:
+                return (int)(62 * Game.SCALE);
+            case BAMBOO_THREE:
+                return -(int)(62 * Game.SCALE);
+            }
+            return 0;
+        }
+
+        //GET method for drawing bamboos and sakura in the level
+        public static int GetBambooHeight(int bambooType) {
+            switch (bambooType) {
+            case BAMBOO_ONE:
+                return (int)(int)(92 * Game.SCALE);
+            case BAMBOO_TWO, BAMBOO_THREE:
+                return (int)(54 * Game.SCALE);
+            }
+            return 0;
+        }
     }
 
     //Constants class for the Enemies
     public static class EnemyConstants {
         public static final int MOB = 0;
+        public static final int GOBLIN = 1;
+        public static final int FAST_MOB = 2;
 
         //for enemy's action constants
         public static final int IDLE = 0;
@@ -82,28 +153,53 @@ public class Constants {
         //the default size of the sprite
         public static final int MOB_WIDTH_DEFAULT = 64;
         public static final int MOB_HEIGHT_DEFAULT = 40;
-
         //the actual size of the sprite
         public static final int MOB_WIDTH = (int)(MOB_WIDTH_DEFAULT * Game.SCALE);
         public static final int MOB_HEIGHT = (int)(MOB_HEIGHT_DEFAULT * Game.SCALE);
-
         public static final int MOB_DRAWOFFSET_X = (int)(21 * Game.SCALE);
         public static final int MOB_DRAWOFFSET_Y = (int)(6 * Game.SCALE);
 
+        //the default size of the sprite
+        public static final int GOBLIN_WIDTH_DEFAULT = 64;
+        public static final int GOBLIN_HEIGHT_DEFAULT = 40;
+        //the actual size of the sprite
+        public static final int GOBLIN_WIDTH = (int)(GOBLIN_WIDTH_DEFAULT * Game.SCALE);
+        public static final int GOBLIN_HEIGHT = (int)(GOBLIN_HEIGHT_DEFAULT * Game.SCALE);
+        public static final int GOBLIN_DRAWOFFSET_X = (int)(19 * Game.SCALE);
+        public static final int GOBLIN_DRAWOFFSET_Y = (int)(4 * Game.SCALE);
+
+        //the default size of the sprite
+        public static final int FAST_MOB_WIDTH_DEFAULT = 64;
+        public static final int FAST_MOB_HEIGHT_DEFAULT = 40;
+        //the actual size of the sprite
+        public static final int FAST_MOB_WIDTH = (int)(FAST_MOB_WIDTH_DEFAULT * Game.SCALE);
+        public static final int FAST_MOB_HEIGHT = (int)(FAST_MOB_HEIGHT_DEFAULT * Game.SCALE);
+        public static final int FAST_MOB_DRAWOFFSET_X = (int)(23 * Game.SCALE);
+        public static final int FAST_MOB_DRAWOFFSET_Y = (int)(5 * Game.SCALE);
+
         //how many sprites in action
         public static int GetSpriteAmount(int enemy_type, int enemy_state) {
-            switch (enemy_type) {
-            case MOB:
-                switch (enemy_state) {
-                case IDLE:
+            switch (enemy_state) {
+            case IDLE: {
+                if (enemy_type == MOB) {
                     return 5;
-                case RUNNING:
-                case DEAD:
+                } else if (enemy_type == GOBLIN || enemy_type == FAST_MOB) {
                     return 6;
-                case ATTACK:
-                case HIT:
+                }
+            }
+            case RUNNING:
+                return 6;
+            case ATTACK:
+                if (enemy_type == FAST_MOB) {
+                    return 8;
+                } else if (enemy_type == MOB) {
                     return 4;
                 }
+                return 7;
+            case HIT:
+                return 4;
+            case DEAD:
+                return 6;
             }
 
             return 0;
@@ -113,7 +209,9 @@ public class Constants {
         public static int GetMaxHealth(int enemy_type) {
             switch (enemy_type) {
             case MOB:
-                return 15;
+                return 50;
+            case GOBLIN, FAST_MOB:
+                return 25;
             default:
                 return 1;
             }
@@ -124,6 +222,10 @@ public class Constants {
             switch (enemy_type) {
             case MOB:
                 return 15;
+            case GOBLIN:
+                return 20;
+            case FAST_MOB:
+                return 25;
             default:
                 return 0;
             }
@@ -202,7 +304,6 @@ public class Constants {
 
         //how many sprites in action
         public static int GetSpriteAmount(int player_action) {
-
             switch (player_action) {
             case RUNNING:
             case DEAD:

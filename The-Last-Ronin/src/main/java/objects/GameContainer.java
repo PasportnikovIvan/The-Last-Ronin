@@ -15,10 +15,10 @@ public class GameContainer extends GameObject {
     //two different sizes of the hitboxes
     private void createHitbox() {
         if (objType == BOX) {
-            initHitbox(25, 18);
+            initHitbox(25, 20);
 
             xDrawOffset = (int)(7 * Game.SCALE);
-            yDrawOffset = (int)(12 * Game.SCALE);
+            yDrawOffset = (int)(10 * Game.SCALE);
         } else {
             initHitbox(23, 25);
 

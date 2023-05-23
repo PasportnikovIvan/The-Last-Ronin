@@ -1,6 +1,5 @@
 package ui;
 
-import gamestates.Gamestate;
 import main.Game;
 import static utilz.Constants.UI.PauseButtons.SOUND_SIZE;
 import static utilz.Constants.UI.VolumeButtons.SLIDER_WIDTH;

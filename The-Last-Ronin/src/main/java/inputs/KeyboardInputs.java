@@ -19,7 +19,7 @@ public class KeyboardInputs implements KeyListener {
 
     }
 
-    //making controllers WASD, Space - starting direction
+    //making controllers A_D, Space - starting direction, ESC - opening options
     @Override
     public void keyPressed(KeyEvent e) {
         switch (Gamestate.state) {
@@ -46,6 +46,9 @@ public class KeyboardInputs implements KeyListener {
             break;
         case PLAYING:
             gamePanel.getGame().getPlaying().keyReleased(e);
+            break;
+        case CREDITS:
+            gamePanel.getGame().getCredits().keyReleased(e);
             break;
         default:
             break;

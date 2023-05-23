@@ -124,7 +124,9 @@ public class AudioPlayer {
     }
 
     public void playEffect(int effect) {
-        effects[effect].setMicrosecondPosition(0); //making play from beginning
+        if (effects[effect].getMicrosecondPosition() > 0) { //making play from beginning
+            effects[effect].setMicrosecondPosition(0);
+        }
         effects[effect].start();
     }
 

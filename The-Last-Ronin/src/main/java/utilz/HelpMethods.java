@@ -1,22 +1,9 @@
 package utilz;
 
-import entities.Mob;
-import gamestates.Playing;
 import main.Game;
-import objects.Archer;
-import objects.GameContainer;
-import objects.Potion;
 import objects.Projectile;
-import objects.Spike;
 
-import java.awt.Color;
-import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-
-import static utilz.Constants.EnemyConstants.MOB;
-import static utilz.Constants.ObjectConstants.*;
 
 //class for helping methods
 //will have a few static methods, that take in some data and return some value
@@ -25,7 +12,6 @@ public class HelpMethods {
 
     //method is going to check the position
     public static boolean CanMoveHere(float x, float y, float width, float height, int[][] lvlData) {
-
         if (!IsSolid(x, y, lvlData)) {
             if (!IsSolid(x + width, y + height, lvlData)) {
                 if (!IsSolid(x + width, y, lvlData)) {
@@ -41,6 +27,22 @@ public class HelpMethods {
     //collision of the projectiles with level
     public static boolean IsProjectileHittingLevel(Projectile p, int[][] lvlData) {
         return IsSolid(p.getHitbox().x + p.getHitbox().width / 2, p.getHitbox().y + p.getHitbox().height / 2, lvlData);
+    }
+
+    //Will only check if entity touch top water. Can't reach bottom water if not touched top water
+    public static boolean IsEntityInWater(Rectangle2D.Float hitbox, int[][] lvlData) {
+        if (GetTileValue(hitbox.x, hitbox.y + hitbox.height, lvlData) != 48) {
+            if (GetTileValue(hitbox.x + hitbox.width, hitbox.y + hitbox.height, lvlData) != 48) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static int GetTileValue(float xPos, float yPos, int[][] lvlData) {
+        int xCord = (int)(xPos / Game.TILES_SIZE);
+        int yCord = (int)(yPos / Game.TILES_SIZE);
+        return lvlData[yCord][xCord];
     }
 
     //method going to check whether it is a tile or not, but also check the position is inside whe window
@@ -62,10 +64,12 @@ public class HelpMethods {
     public static boolean IsTileSolid(int xTile, int yTile, int[][] lvlData) {
         int value = lvlData[yTile][xTile];
 
-        if (value >= 48 || value < 0 || value != 11) {
+        switch (value) {
+        case 11, 48, 49:
+            return false;
+        default:
             return true;
         }
-        return false;
     }
 
     public static float GetEntityXPosNextToWall(Rectangle2D.Float hitbox, float xSpeed) {
@@ -96,8 +100,8 @@ public class HelpMethods {
 
     public static boolean IsEntityOnFloor(Rectangle2D.Float hitbox, int[][] lvlData) {
         //Check the pixel below bottom-left and bottom-right
-        if (!IsSolid(hitbox.x, hitbox.y+hitbox.height+1, lvlData)) {
-            if (!IsSolid(hitbox.x+hitbox.width, hitbox.y+hitbox.height+1, lvlData)) {
+        if (!IsSolid(hitbox.x, hitbox.y + hitbox.height + 1, lvlData)) {
+            if (!IsSolid(hitbox.x + hitbox.width, hitbox.y + hitbox.height + 1, lvlData)) {
                 return false;
             }
         }
@@ -118,6 +122,15 @@ public class HelpMethods {
         } else {
             return IsSolid(hitbox.x + xSpeed, hitbox.y + hitbox.height + 1, lvlData);
         }
+    }
+
+    public static boolean IsFloor(Rectangle2D.Float hitbox, int[][] lvlData) {
+        if (!IsSolid(hitbox.x + hitbox.width, hitbox.y + hitbox.height + 1, lvlData)) {
+            if (!IsSolid(hitbox.x, hitbox.y + hitbox.height + 1, lvlData)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static boolean CanArcherSeePlayer(int[][] lvlData, Rectangle2D.Float firstHitbox, Rectangle2D.Float secondHitbox, int yTile) {
@@ -152,7 +165,26 @@ public class HelpMethods {
     }
 
     //checking if there is a line of sight between two points
-    public static boolean IsSightClear(int[][] lvlData, Rectangle2D.Float firstHitbox, Rectangle2D.Float secondHitbox, int yTile) {
+    //this method checks both player x and player x + width.
+    public static boolean IsSightClear(int[][] lvlData, Rectangle2D.Float enemyBox, Rectangle2D.Float playerBox, int yTile) {
+        int firstXTile = (int) (enemyBox.x / Game.TILES_SIZE);
+
+        int secondXTile;
+        if (IsSolid(playerBox.x, playerBox.y + playerBox.height + 1, lvlData)) {
+            secondXTile = (int)(playerBox.x / Game.TILES_SIZE);
+        } else {
+            secondXTile = (int)((playerBox.x + playerBox.width) / Game.TILES_SIZE);
+        }
+
+        if (firstXTile > secondXTile) {
+            return IsAllTilesWalkable(secondXTile, firstXTile, yTile, lvlData);
+        } else {
+            return IsAllTilesWalkable(firstXTile, secondXTile, yTile, lvlData);
+        }
+    }
+
+    //checking if there is a line of sight between two points
+    public static boolean IsSightClear_OLD_METHOD(int[][] lvlData, Rectangle2D.Float firstHitbox, Rectangle2D.Float secondHitbox, int yTile) {
         int firstXTile = (int)(firstHitbox.x / Game.TILES_SIZE);
         int secondXTile = (int)(secondHitbox.x / Game.TILES_SIZE);
 
@@ -162,121 +194,5 @@ public class HelpMethods {
         } else {
             return IsAllTilesWalkable(firstXTile, secondXTile, yTile, lvlData);
         }
-    }
-
-    //The option to draw levels
-    //There is image file, where each pixel is a position on the level
-    //(for example) img file (4x4) = Level, 4x4 tiles
-    //Each pixel have 3 colors (Red, Green, Blue)
-    //the color value = the spriteID
-    //0-255 in value (48 for now, because of outside sprites 12 width x 4 height)
-    //Color color = new Color(red = spriteID, green = enemies and player, blue = objects)
-    public static int[][] GetLevelData(BufferedImage img) {
-        int[][] lvlData = new int[img.getHeight()][img.getWidth()];
-
-        //using size of the img to loop through each pixel and add the pixel to lvlData
-        for (int j = 0; j < img.getHeight(); j++) {
-            for (int i = 0; i < img.getWidth(); i++) {
-                Color color = new Color(img.getRGB(i, j));
-                int value = color.getRed();
-                if (value >= 48) {
-                    value = 0;
-                }
-                lvlData[j][i] = value;
-            }
-        }
-        return lvlData;
-    }
-
-    //GET method is same as GetLvlData for the all levels
-    public static ArrayList<Mob> GetMobs(BufferedImage img) {
-        ArrayList<Mob> list = new ArrayList<>();
-
-        //using size of the img to loop through each pixel and add the Enemy pixel to lvlData
-        //going over the img and if finds color with GREEN value equals "MOB" (0), then adds this position to the list
-        for (int j = 0; j < img.getHeight(); j++) {
-            for (int i = 0; i < img.getWidth(); i++) {
-                Color color = new Color(img.getRGB(i, j));
-                int value = color.getGreen();
-                if (value == MOB) {
-                    list.add(new Mob(i * Game.TILES_SIZE, j * Game.TILES_SIZE));
-                }
-            }
-        }
-        return list;
-    }
-
-    //GET method is same as GetLvlData for the all levels
-    public static Point GetPlayerSpawn(BufferedImage img) {
-        for (int j = 0; j < img.getHeight(); j++) {
-            for (int i = 0; i < img.getWidth(); i++) {
-                Color color = new Color(img.getRGB(i, j));
-                int value = color.getGreen();
-                if (value == 100) {
-                    return new Point(i * Game.TILES_SIZE, j * Game.TILES_SIZE);
-                }
-            }
-        }
-        return new Point(1 * Game.TILES_SIZE, 1 * Game.TILES_SIZE);
-    }
-
-    //GET method is same as GetLvlData for the all levels
-    public static ArrayList<Potion> GetPotions(BufferedImage img) {
-        ArrayList<Potion> list = new ArrayList<>();
-        for (int j = 0; j < img.getHeight(); j++) {
-            for (int i = 0; i < img.getWidth(); i++) {
-                Color color = new Color(img.getRGB(i, j));
-                int value = color.getBlue();
-                if (value == RED_POTION || value == BLUE_POTION) {
-                    list.add(new Potion(i * Game.TILES_SIZE, j * Game.TILES_SIZE, value));
-                }
-            }
-        }
-        return list;
-    }
-
-    //GET method is same as GetLvlData for the all levels
-    public static ArrayList<GameContainer> GetContainers(BufferedImage img) {
-        ArrayList<GameContainer> list = new ArrayList<>();
-        for (int j = 0; j < img.getHeight(); j++) {
-            for (int i = 0; i < img.getWidth(); i++) {
-                Color color = new Color(img.getRGB(i, j));
-                int value = color.getBlue();
-                if (value == BOX || value == BARREL) {
-                    list.add(new GameContainer(i * Game.TILES_SIZE, j * Game.TILES_SIZE, value));
-                }
-            }
-        }
-        return list;
-    }
-
-    //GET method is same as GetLvlData for the all levels
-    public static ArrayList<Spike> GetSpikes(BufferedImage img) {
-        ArrayList<Spike> list = new ArrayList<>();
-        for (int j = 0; j < img.getHeight(); j++) {
-            for (int i = 0; i < img.getWidth(); i++) {
-                Color color = new Color(img.getRGB(i, j));
-                int value = color.getBlue();
-                if (value == SPIKE) {
-                    list.add(new Spike(i * Game.TILES_SIZE, j * Game.TILES_SIZE, SPIKE));
-                }
-            }
-        }
-        return list;
-    }
-
-    //GET method is same as GetLvlData for the all levels
-    public static ArrayList<Archer> GetArchers(BufferedImage img) {
-        ArrayList<Archer> list = new ArrayList<>();
-        for (int j = 0; j < img.getHeight(); j++) {
-            for (int i = 0; i < img.getWidth(); i++) {
-                Color color = new Color(img.getRGB(i, j));
-                int value = color.getBlue();
-                if (value == ARCHER_LEFT || value == ARCHER_RIGHT) {
-                    list.add(new Archer(i * Game.TILES_SIZE, j * Game.TILES_SIZE, value));
-                }
-            }
-        }
-        return list;
     }
 }

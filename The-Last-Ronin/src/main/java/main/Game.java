@@ -1,12 +1,12 @@
 package main;
 
 import audio.AudioPlayer;
+import gamestates.Credits;
 import gamestates.GameOptions;
 import gamestates.Gamestate;
 import gamestates.Menu;
 import gamestates.Playing;
 import ui.AudioOptions;
-import utilz.LoadSave;
 
 import java.awt.Graphics;
 
@@ -14,7 +14,6 @@ import java.awt.Graphics;
 //This one is "game" class. This is where added everything together.
 public class Game implements Runnable {
 
-    private GameWindow gameWindow;
     private GamePanel gamePanel;
     private Thread gameThread; //Creating Thread
     private final int FPS_SET = 120; //set FPS Max
@@ -22,6 +21,7 @@ public class Game implements Runnable {
 
     private Playing playing;
     private Menu menu;
+    private Credits credits;
     private GameOptions gameOptions;
     private AudioOptions audioOptions;
     private AudioPlayer audioPlayer;
@@ -35,13 +35,16 @@ public class Game implements Runnable {
     public final static int GAME_WIDTH = TILES_SIZE * TILES_IN_WIDTH;
     public final static int GAME_HEIGHT = TILES_SIZE * TILES_IN_HEIGHT;
 
+    private final boolean SHOW_FPS_UPS = true;
+
     public Game() {
+        System.out.println("size: " + GAME_WIDTH + "x" + GAME_HEIGHT);
         initClasses(); //init all entities without long list
 
         gamePanel = new GamePanel(this);
-        gameWindow = new GameWindow(gamePanel);
+        new GameWindow(gamePanel);
         gamePanel.setFocusable(true);
-        gamePanel.requestFocus(); //requests that gets the input focus
+        gamePanel.requestFocusInWindow(); //requests that gets the input focus
 
         startGameLoop();
     }
@@ -51,6 +54,7 @@ public class Game implements Runnable {
         audioPlayer = new AudioPlayer();
         menu = new Menu(this);
         playing = new Playing(this);
+        credits = new Credits(this);
         gameOptions = new GameOptions(this);
     }
 
@@ -63,36 +67,21 @@ public class Game implements Runnable {
     //stable gameUpdate for the loop
     public void update() {
         switch (Gamestate.state) {
-        case MENU:
-            menu.update();
-            break;
-        case PLAYING:
-            playing.update();
-            break;
-        case OPTIONS:
-            gameOptions.update();
-            break;
-        case QUIT:
-        default:
-            //is going to exit the program or terminate it
-            System.exit(0);
-            break;
+        case MENU -> menu.update();
+        case PLAYING -> playing.update();
+        case OPTIONS -> gameOptions.update();
+        case CREDITS -> credits.update();
+        //is going to exit the program or terminate it
+        case QUIT -> System.exit(0);
         }
     }
 
     public void render(Graphics g) {
         switch (Gamestate.state) {
-        case MENU:
-            menu.draw(g);
-            break;
-        case PLAYING:
-            playing.draw(g);
-            break;
-        case OPTIONS:
-            gameOptions.draw(g);
-            break;
-        default:
-            break;
+        case MENU -> menu.draw(g);
+        case PLAYING -> playing.draw(g);
+        case OPTIONS -> gameOptions.draw(g);
+        case CREDITS -> credits.draw(g);
         }
     }
 
@@ -132,11 +121,13 @@ public class Game implements Runnable {
             }
 
             //FPS check
-            if (System.currentTimeMillis() - lastCheck >= 1000) {
-                lastCheck = System.currentTimeMillis();
-                System.out.println("FPS: " + frames + " | UPS: " + updates);
-                frames = 0;
-                updates = 0;
+            if (SHOW_FPS_UPS) {
+                if (System.currentTimeMillis() - lastCheck >= 1000) {
+                    lastCheck = System.currentTimeMillis();
+                    System.out.println("FPS: " + frames + " | UPS: " + updates);
+                    frames = 0;
+                    updates = 0;
+                }
             }
         }
     }
@@ -154,6 +145,10 @@ public class Game implements Runnable {
 
     public Playing getPlaying() {
         return playing;
+    }
+
+    public Credits getCredits() {
+        return credits;
     }
 
     public GameOptions getGameOptions() {

@@ -1,6 +1,7 @@
 package objects;
 
 import audio.AudioPlayer;
+import entities.Enemy;
 import entities.Player;
 import gamestates.Playing;
 import levels.Level;
@@ -20,24 +21,35 @@ import java.util.ArrayList;
 public class ObjectManager {
 
     private Playing playing;
-    private BufferedImage[][] potionImgs, containerImgs;
-    private BufferedImage[] archerImgs;
+    private BufferedImage[][] potionImgs, containerImgs, bambooImgs;
+    private BufferedImage[] archerImgs, grassImgs;
     private BufferedImage spikeImg, arrowImg;
     private ArrayList<Potion> potions;
     private ArrayList<GameContainer> containers;
-    private ArrayList<Spike> spikes;
-    private ArrayList<Archer> archers;
     private ArrayList<Projectile> projectiles = new ArrayList<>(); //not using the Level for the projectiles. Every time archer shoot - arrow adds to array
+
+    private Level currentLevel;
 
     public ObjectManager(Playing playing) {
         this.playing = playing;
+        currentLevel = playing.getLevelManager().getCurrentLevel();
         loadImgs();
     }
 
+    //touched by player
     public void checkSpikesTouched(Player p) {
-        for (Spike s : spikes) {
+        for (Spike s : currentLevel.getSpikes()) {
             if (s.getHitbox().intersects(p.getHitbox())) {
                 p.kill();
+            }
+        }
+    }
+
+    //touched by enemy
+    public void checkSpikesTouched(Enemy e) {
+        for (Spike s : currentLevel.getSpikes()) {
+            if (s.getHitbox().intersects(e.getHitbox())) {
+                e.hurt(200);
             }
         }
     }
@@ -81,10 +93,9 @@ public class ObjectManager {
     }
 
     public void loadObjects(Level newLevel) {
+        currentLevel = newLevel;
         potions = new ArrayList<>(newLevel.getPotions());
         containers = new ArrayList<>(newLevel.getContainers());
-        spikes = newLevel.getSpikes(); //spikes are static - no need to reset them
-        archers = newLevel.getArchers(); //?TO_DO? if player can kill archers I'll add way to kill them so will be needed to make a new lists like poisons
         projectiles.clear();
     }
 
@@ -117,9 +128,30 @@ public class ObjectManager {
         }
 
         arrowImg = LoadSave.GetSpriteAtlas(LoadSave.ARROW);
+
+        BufferedImage bambooOneImg = LoadSave.GetSpriteAtlas(LoadSave.BAMBOO_ONE_ATLAS);
+        bambooImgs = new BufferedImage[2][4];
+
+        for (int i = 0; i < 4; i++) {
+            bambooImgs[0][i] = bambooOneImg.getSubimage(i * 39, 0, 39, 92);
+        }
+
+        BufferedImage bambooTwoImg = LoadSave.GetSpriteAtlas(LoadSave.BAMBOO_TWO_ATLAS);
+
+        for (int i = 0; i < 4; i++) {
+            bambooImgs[1][i] = bambooTwoImg.getSubimage(i * 62, 0, 62, 54);
+        }
+
+        BufferedImage grassTemp = LoadSave.GetSpriteAtlas(LoadSave.GRASS_ATLAS);
+        grassImgs = new BufferedImage[2];
+
+        for (int i = 0; i < grassImgs.length; i++) {
+            grassImgs[i] = grassTemp.getSubimage(32 * i, 0, 32, 32);
+        }
     }
 
     public void update(int[][] lvlData, Player player) {
+        updateBackgroundBamboos();
         for (Potion p : potions) {
             if (p.isActive()) {
                 p.update();
@@ -134,6 +166,11 @@ public class ObjectManager {
 
         updateArchers(lvlData, player);
         updateProjectiles(lvlData, player);
+    }
+
+    private void updateBackgroundBamboos() {
+        for (BackgroundBamboo bb : currentLevel.getBamboos())
+            bb.update();
     }
 
     private void updateProjectiles(int[][] lvlData, Player player) {
@@ -167,7 +204,7 @@ public class ObjectManager {
     }
 
     private void updateArchers(int[][] lvlData, Player player) {
-        for (Archer a : archers) {
+        for (Archer a : currentLevel.getArchers()) {
             if (!a.doAnimation) { //if the archer is not animating
                 if (a.getTileY() == player.getTileY()) { //tileY is the same
                     if (isPlayerInRange(a, player)) { //is player in range
@@ -204,6 +241,22 @@ public class ObjectManager {
         drawProjectiles(g, xLvlOffset);
     }
 
+    public void drawGrass(Graphics g, int xLvlOffset) {
+        for (Grass grass : currentLevel.getGrass()) {
+            g.drawImage(grassImgs[grass.getType()], grass.getX() - xLvlOffset, grass.getY() + 1, (int)(32 * Game.SCALE), (int)(32 * Game.SCALE), null);
+        }
+    }
+
+    public void drawBackgroundBamboo(Graphics g, int xLvlOffset) {
+        for (BackgroundBamboo bb : currentLevel.getBamboos()) {
+            int type = bb.getType();
+            if (type == 9) {
+                type = 8;
+            }
+            g.drawImage(bambooImgs[type - 7][bb.getAniIndex()], bb.getX() - xLvlOffset + GetBambooOffsetX(bb.getType()), (int)(bb.getY() + GetBambooOffsetY(bb.getType())), GetBambooWidth(bb.getType()), GetBambooHeight(bb.getType()), null);
+        }
+    }
+
     private void drawProjectiles(Graphics g, int xLvlOffset) {
         for (Projectile p : projectiles) {
             if (p.isActive()) {
@@ -217,7 +270,7 @@ public class ObjectManager {
     }
 
     private void drawArchers(Graphics g, int xLvlOffset) {
-        for (Archer a : archers) {
+        for (Archer a : currentLevel.getArchers()) {
 
             int x = (int)(a.getHitbox().x - xLvlOffset);
             int width = ARCHER_WIDTH;
@@ -231,7 +284,7 @@ public class ObjectManager {
     }
 
     private void drawTraps(Graphics g, int xLvlOffset) {
-        for (Spike s : spikes) {
+        for (Spike s : currentLevel.getSpikes()) {
             g.drawImage(spikeImg, (int)(s.getHitbox().x - xLvlOffset), (int)(s.getHitbox().y - s.getyDrawOffset()), SPIKE_WIDTH, SPIKE_HEIGHT, null);
         }
     }
@@ -270,7 +323,7 @@ public class ObjectManager {
         for (GameContainer gc : containers) {
             gc.reset();
         }
-        for (Archer a : archers) {
+        for (Archer a : currentLevel.getArchers()) {
             a.reset();
         }
     }

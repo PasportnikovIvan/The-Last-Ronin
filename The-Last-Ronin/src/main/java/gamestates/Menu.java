@@ -10,9 +10,9 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 //class Menu of the Gamestates
-public class Menu extends State implements Statemethods{
+public class Menu extends State implements Statemethods {
 
-    private MenuButton[] buttons = new MenuButton[3];
+    private MenuButton[] buttons = new MenuButton[4];
     private BufferedImage backgroundImg, backgroundImgFull;
     private int menuX, menuY, menuWidth, menuHeight;
 
@@ -34,8 +34,9 @@ public class Menu extends State implements Statemethods{
     //creating buttons manually, without loop
     private void loadButtons() {
         buttons[0] = new MenuButton(Game.GAME_WIDTH / 2, (int)(150 * Game.SCALE), 0, Gamestate.PLAYING);
-        buttons[1] = new MenuButton(Game.GAME_WIDTH / 2, (int)(220 * Game.SCALE), 1, Gamestate.OPTIONS);
-        buttons[2] = new MenuButton(Game.GAME_WIDTH / 2, (int)(290 * Game.SCALE), 2, Gamestate.QUIT);
+        buttons[1] = new MenuButton(Game.GAME_WIDTH / 2, (int)(210 * Game.SCALE), 1, Gamestate.OPTIONS);
+        buttons[2] = new MenuButton(Game.GAME_WIDTH / 2, (int)(270 * Game.SCALE), 3, Gamestate.CREDITS);
+        buttons[3] = new MenuButton(Game.GAME_WIDTH / 2, (int)(330 * Game.SCALE), 2, Gamestate.QUIT);
     }
 
     @Override
@@ -115,9 +116,7 @@ public class Menu extends State implements Statemethods{
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            Gamestate.state = Gamestate.PLAYING;
-        }
+
     }
 
     @Override

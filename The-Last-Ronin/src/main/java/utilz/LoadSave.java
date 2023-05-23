@@ -38,6 +38,18 @@ public class LoadSave {
     public static final String ARROW = "arrow.png";
     public static final String DEATH_SCREEN = "death_screen.png";
     public static final String OPTIONS_MENU = "options_menu.png";
+    public static final String GOBLIN_ATLAS = "goblin_atlas.png";
+    public static final String QUESTION_ATLAS = "question_atlas.png";
+    public static final String XCROSS_ATLAS = "xcross_atlas.png";
+    public static final String FAST_MOB_ATLAS = "fast_mob_atlas.png";
+    public static final String CREDITS = "credits_list.png";
+    public static final String GRASS_ATLAS = "grass_atlas.png";
+    public static final String BAMBOO_ONE_ATLAS = "bamboo_one_atlas.png";
+    public static final String BAMBOO_TWO_ATLAS = "bamboo_two_atlas.png";
+    public static final String GAME_COMPLETED = "game_completed.png";
+    public static final String SAKURA_PARTICLE = "sakura_particle.png";
+    public static final String WATER_TOP = "water_atlas_animation.png";
+    public static final String WATER_BOTTOM = "water.png";
 
     //getting all atlases
     public static BufferedImage GetSpriteAtlas(String fileName) {

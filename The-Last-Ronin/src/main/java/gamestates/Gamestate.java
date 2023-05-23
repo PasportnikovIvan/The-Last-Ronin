@@ -5,7 +5,7 @@ package gamestates;
 //That class will have constants that correspond to the Gamestates (Menu, Playing, LvlSelect and Settings)
 public enum Gamestate {
 
-    PLAYING, MENU, OPTIONS, QUIT;
+    PLAYING, MENU, OPTIONS, QUIT, CREDITS;
 
     public static Gamestate state = MENU;
 }

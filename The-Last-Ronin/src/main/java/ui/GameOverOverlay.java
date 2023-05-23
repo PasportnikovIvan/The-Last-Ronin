@@ -8,7 +8,6 @@ import utilz.LoadSave;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
@@ -60,10 +59,6 @@ public class GameOverOverlay {
     public void update() {
         menu.update();
         replay.update();
-    }
-
-    public void keyPressed(KeyEvent e) {
-
     }
 
     //check pressing inside the button

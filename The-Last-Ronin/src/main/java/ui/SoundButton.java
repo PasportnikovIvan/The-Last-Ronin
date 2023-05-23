@@ -7,7 +7,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 //The ui class of the Sound Buttons of the Pause menu
-public class SoundButton extends PauseButton{
+public class SoundButton extends PauseButton {
 
     private BufferedImage[][] soundImgs; //2d array (buttonArray 3x2)
     private boolean mouseOver, mousePressed;
