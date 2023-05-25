@@ -77,6 +77,7 @@ public class Level {
                 loadObjects(blue, x, y);
             }
         }
+//        print2DArray(); //created method for test
     }
 
     //loading method for the all levels
@@ -120,6 +121,7 @@ public class Level {
         lvlTilesWide = img.getWidth();
         maxTilesOffset = lvlTilesWide - Game.TILES_IN_WIDTH;
         maxLvlOffsetX = Game.TILES_SIZE * maxTilesOffset;
+        System.out.println(maxLvlOffsetX);
     }
 
     public int getSpriteIndex(int x, int y) {
@@ -128,6 +130,26 @@ public class Level {
 
     public int[][] getLevelData() {
         return lvlData;
+    }
+
+    //created method for test
+    public void print2DArray() {
+        int[][] array = lvlData;
+        System.out.print("{");
+        for (int i = 0; i < array.length; i++) {
+            System.out.print("{");
+            for (int j = 0; j < array[i].length; j++) {
+                System.out.print(array[i][j]);
+                if (j < array[i].length - 1) {
+                    System.out.print(",");
+                }
+            }
+            System.out.print("}");
+            if (i < array.length - 1) {
+                System.out.print(",");
+            }
+        }
+        System.out.println("}");
     }
 
     public int getLvlOffset() {
