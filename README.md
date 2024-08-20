@@ -225,4 +225,4 @@ The resources folder contains the images used in the game, including game sprite
 
 ## This documentation provides an overview of the classes and groups involved in developing the platformer game, along with additional information about the game's resources folder.
 
-![java](uploads/2da1164ed6f840dfbab94c9abde40d42/java.png)
+![image](https://github.com/user-attachments/assets/07dba13f-2f85-440f-892f-9b9cb3c8a4fc)
