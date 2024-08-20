@@ -1,4 +1,4 @@
-## The game platformer is written in Java, using swing libraries for GUI and JDK version 16 without any external libraries. 
+## The game platformer is written in Java, using swing libraries for GUI and JDK version 16 without any external libraries. More on [WIKI](https://github.com/PasportnikovIvan/The-Last-Ronin/wiki) page
 
 ### Things to need to create the game:
 - GameWindow 
